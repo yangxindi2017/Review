@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>js基础配套代码</title>
+</head>
+<body>
+    <input type="text" id="inp" placeholder="debounce"/>
+    <input type="text" id="throttle" placeholder="throttle"/>
+
+</body>
+</html>
+
+
+<script>
+// 防抖：每次触发时都取消之前的延时调用方法
+//相当于setTimeout只执行最后一次的触发
+function debounce(fn){
+    let  timeout = null; //创建一个标志用来存放定时器的返回值
+    return function(){
+        clearTimeout(timeout);
+        timeout = setTimeout(()=>{
+            fn();// fn.apply(this,arguments)
+        },500);
+    };
+};
+function sayHi(){
+    console.log('防抖成功');
+}
+// var i = document.c  reateElement('input');
+var inp = document.getElementById('inp');
+inp.addEventListener('input',debounce(sayHi));
+
+
+//节流：每次触发时都判断当前是否有等待执行的延时函数
+function throttle(fn){
+    let canRun = true;//通过闭包保存一个标记
+    return function(){
+        if(!canRun) return;//在函数开头判断标记是否为true，部位true则return；
+        canRun = false;//通过判断后立即设置为false
+        setTimeout(()=>{
+            fn.apply(this,arguments);
+            //最后在setTimeout执行完毕后再把标记设置为true
+            // 表示可抑制下一次循环了。当定时器没有执行的时候永远为false，
+            // 在开头被return掉。
+            canRun = true;
+        },500);
+    };
+}
+function sayHi(){
+    console.log('节流成功');
+}
+var throttle = document.getElementById('throttle');
+
+throttle.addEventListener('input',debounce(sayHi));
+
+// **四、定时器的执行顺序或机制**
+function test(){
+    var aa = 0;
+    var testSet = setInterval(function(){
+        aa++;
+        console.log(123);
+        if(aa<10){
+            clearInterval(testSet);
+        }
+    },20);
+  var testSet1 = setTimeout(function(){
+    console.log(321)
+  },1000);
+  for(var i=0;i<10;i++){
+    console.log('test');
+  }
+}
+test();
+
+// 答案：test(10),123,321
+
+for(var i=1;i<=5;i++){
+    setTimeout(function timer(){
+        console.log(i);
+    },i*1000)
+}
+</script>
